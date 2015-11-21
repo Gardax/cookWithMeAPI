@@ -19,7 +19,7 @@ class RecipeController extends Controller
      */
     public function indexAction()
     {
-        
+
         return array();
     }
 

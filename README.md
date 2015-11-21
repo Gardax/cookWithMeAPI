@@ -33,10 +33,26 @@ $ sudo mv composer.phar /usr/local/bin/composer
 
 sudo curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony
 sudo chmod a+x /usr/local/bin/symfony
+```
+
+<h3>Clone the repository</h3>
+```
+#!python
 composer update
 
 ```
 
+<h3>Create database</h3>
+```
+#!python
+$ php app/console doctrine:database:create
+```
+
+<h3>Update database schema</h3>
+```
+#!python
+$ php app/console doctrine:schema:update --force
+```
 
 <h1>Running the Symfony Application</h1>
 
@@ -47,3 +63,4 @@ Then, open your browser and access the http://localhost:8000 URL to see the Welc
 $ cd my_project_name/
 $ php app/console server:run
 ```
+
