@@ -27,7 +27,7 @@ $ sudo mv composer.phar /usr/local/bin/composer
 
 ```
 
-<h3>nstall symfony</h3>
+<h3>Install symfony</h3>
 ```
 #!python
 
