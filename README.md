@@ -1,7 +1,7 @@
 <h1>Setup:</h1>
 
 
-Install php
+<h3>Install php</h3>
 
 ```
 #!python
@@ -9,7 +9,7 @@ Install php
 sudo apt-get install php5-cli
 
 ```
-Install curl
+<h3>Install curl</h3>
 ```
 #!python
 
@@ -17,7 +17,7 @@ sudo apt-get install curl
 sudo apt-get install php5-curl
 
 ```
-Install Composer
+<h3>Install Composer</h3>
 To install Composer on Linux or Mac OS X, execute the following two commands:
 ```
 #!python
@@ -27,7 +27,7 @@ $ sudo mv composer.phar /usr/local/bin/composer
 
 ```
 
-install symfony
+<h3>nstall symfony</h3>
 ```
 #!python
 
@@ -38,7 +38,7 @@ composer update
 ```
 
 
-Running the Symfony Application
+<h1>Running the Symfony Application</h1>
 
 Then, open your browser and access the http://localhost:8000 URL to see the Welcome page of Symfony
 ```
@@ -47,7 +47,3 @@ Then, open your browser and access the http://localhost:8000 URL to see the Welc
 $ cd my_project_name/
 $ php app/console server:run
 ```
-Install FORestBundle
-http://symfony.com/doc/master/bundles/FOSRestBundle/1-setting_up_the_bundle.html
-and serializer
-http://jmsyst.com/bundles/JMSSerializerBundle
