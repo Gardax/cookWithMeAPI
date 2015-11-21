@@ -13,14 +13,23 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class RecipeController extends Controller
 {
+    const SUCCESS = 1;
+    const FAIL = 0;
+
     /**
-     * @Route("/")
-     * @Template()
+     * @Route("/")]
      */
     public function indexAction()
     {
-        
-        return array();
+        $service = $this->get("recipe_service");
+
+        $recipeEntities = $service->getRecipes();
+        $recipeModels = array();
+        foreach ($recipeEntities as $recipe) {
+            $model = new RecipeModel($recipe);
+            $recipeModels[] = $model;
+        }
+        return new JsonResponse($recipeModels);
     }
 
     /**
@@ -30,14 +39,69 @@ class RecipeController extends Controller
     public function addAction(Request $request)
     {
         $recipeService = $this->get('recipe_service');
-        $recipe = [
+        $recipeData = [
             'title' => $request->request->get('title'),
             'cookTime' => $request->request->get('cookTime'),
         ];
 
-        $recipeResult = $recipeService->addRecipe($recipe);
-        $recipeModel = new RecipeModel($recipeResult);
+        $recipeEntity = $recipeService->addRecipe($recipeData);
+        $recipeModel = new RecipeModel($recipeEntity);
 
         return new JsonResponse($recipeModel);
+    }
+
+    /**
+     * @Route("/recipe/{id}", name="getRecipeById")
+     * @Method({"GET"})
+     */
+    public function getRecipeAction($id)
+    {
+        $recipeService = $this->get("recipe_service");
+
+        $recipeEntity = $recipeService->getRecipeById($id);
+        $recipeModel = new RecipeModel($recipeEntity);
+
+        return new JsonResponse($recipeModel);
+    }
+
+    /**
+     * @Route("/recipe/edit/{id}", name="updateRecipeById")
+     * @Method({"PUT"})
+     */
+    public function updateRecipeById(Request $request, $id)
+    {
+        $recipeService = $this->get("recipe_service");
+
+        $recipeEntity = $recipeService->getRecipeById($id);
+
+        $recipeData = [
+            'title' => $request->request->get('title'),
+            'cookTime' => $request->request->get('cookTime'),
+        ];
+        $updatedRecipe = $recipeService->updateRecipe($recipeEntity, $recipeData);
+
+        $recipeModel = new RecipeModel($updatedRecipe);
+        return new JsonResponse($recipeModel);
+    }
+
+    /**
+     * @Route("/recipe/delete/{id}", name="deleteRecipeById")
+     * @Method("DELETE")
+     */
+    public function deleteRecipeById(Request $request, $id)
+    {
+        $recipeService = $this->get("recipe_service");
+
+        $recipeEntity = $recipeService->getRecipeById($id);
+
+        $result = self::FAIL;
+        if ($recipeEntity) {
+            $result = $recipeService->deleteRecipeById($recipeEntity);
+        }
+
+        $success = $result ? self::SUCCESS : self::FAIL;
+
+        return new JsonResponse(["success" => $success]);
+
     }
 }
