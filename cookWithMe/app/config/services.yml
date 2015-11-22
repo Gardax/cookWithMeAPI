@@ -11,3 +11,11 @@ services:
     recipe_manager:
         class: CookWithMeBundle\Managers\RecipeManager
         arguments: [@doctrine.orm.default_entity_manager]
+
+    step_service:
+        class: CookWithMeBundle\Services\StepService
+        arguments: [@step_manager]
+
+    step_manager:
+        class: CookWithMeBundle\Managers\StepManager
+        arguments: [@doctrine.orm.default_entity_manager]

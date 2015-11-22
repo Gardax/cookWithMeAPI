@@ -33,6 +33,23 @@ class Recipe {
     protected $cookTime;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Step", inversedBy="recipes")
+     * @ORM\JoinTable(name="recipes_steps")
+     */
+    protected $steps;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Ingredient", inversedBy="recipes")
+     * @ORM\JoinTable(name="recipes_ingredients")
+     */
+    protected $ingredients;
+
+    public function __construct() {
+        $this->steps = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->ingredients = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
      * Get id
      *
      * @return integer
