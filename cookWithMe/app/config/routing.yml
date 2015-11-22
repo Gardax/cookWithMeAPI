@@ -2,7 +2,8 @@ cook_with_me:
     resource: "@CookWithMeBundle/Controller/"
     type:     annotation
     prefix:   /
-
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
 app:
     resource: "@AppBundle/Controller/"
     type:     annotation
