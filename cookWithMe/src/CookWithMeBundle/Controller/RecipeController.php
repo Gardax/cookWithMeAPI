@@ -15,15 +15,16 @@ class RecipeController extends Controller
 {
     const SUCCESS = 1;
     const FAIL = 0;
-
+    const PAGE_SIZE = 10;
     /**
-     * @Route("/")]
+     * @Route("/recipe/{page}", defaults={"page" = 1})]
      */
-    public function indexAction()
+    public function indexAction(Request $request, $page)
     {
         $service = $this->get("recipe_service");
 
-        $recipeEntities = $service->getRecipes();
+        $title = $request->request->get('title');
+        $recipeEntities = $service->getRecipes($page, self::PAGE_SIZE, $title);
         $recipeModels = array();
         foreach ($recipeEntities as $recipe) {
             $model = new RecipeModel($recipe);

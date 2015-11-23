@@ -29,15 +29,48 @@ class RecipeManager {
     }
 
     /**
-     * Gets all recipes.
+     * get Recipes by title if passed/ not passed
      *
-     * @return Recipe[]
+     * @param integer $start
+     * @param integer $end
+     * @param string $title
+     * @return array
      */
-    public function getRecipes(){
-        $recipes =  $this->entityManager->getRepository("CookWithMeBundle:Recipe")->findAll();
+    public function getRecipes($start,$end,$title){
 
-        return $recipes;
+
+        if($title == null){
+            $em = $this->entityManager;
+            $query = $em->createQuery(
+                "SELECT r
+            FROM CookWithMeBundle:Recipe r
+            "
+            )   ->setFirstResult($start)
+                ->setMaxResults($end);
+
+            $recipes = $query->getResult();
+            return $recipes;
+        }else{
+            $em = $this->entityManager;
+            $query = $em->createQuery(
+                "SELECT r
+            FROM CookWithMeBundle:Recipe r
+            WHERE r.title LIKE :title"
+            )->setParameters([
+                "title" => $title
+            ])
+                ->setFirstResult($start)
+                ->setMaxResults($end);
+
+            $recipes = $query->getResult();
+            return $recipes;
+        }
+
+
+
+
     }
+
 
     /**
      * Gets a recipe by id.

@@ -32,20 +32,32 @@ class RecipeService {
     }
 
     /**
-     * Gets all recipes.
+     * return Recipes with limit per page
      *
-     * @return Recipe[]
+     * @param integer $page
+     * @param integer $pageSize
+     * @param string $title
+     * @return array
      */
-    public function getRecipes(){
-        $recipes = $this->recipeManager->getRecipes();
+    public function getRecipes($page,$pageSize,$title){
 
+        if($page < 1){
+            $page = 1;
+        }
+
+        $start = ($page -1) *$pageSize;
+        $end = $start + $pageSize;
+
+
+
+        $recipes = $this->recipeManager->getRecipes($start,$end,$title);
         return $recipes;
     }
 
     /**
-     * Gets recipe by id.
+     * return Recipe by Id
      *
-     * @param integer $id
+     * @param $id
      * @return Recipe|null
      */
     public function getRecipeById($id){
@@ -84,6 +96,7 @@ class RecipeService {
 
         return $result;
     }
+    
     public function addStepsToRecipe(Recipe $recipe, $stepsData){
 
     }
