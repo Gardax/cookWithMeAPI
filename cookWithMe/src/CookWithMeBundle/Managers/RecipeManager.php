@@ -16,6 +16,32 @@ class RecipeManager {
     }
 
     /**
+     * return Recipes selected by ingredient
+     *
+     * @param integer $start
+     * @param integer $end
+     * @param  string $recipeIngredients
+     * @return array
+     */
+
+    public function getRecipeByIngredient($start,$end,$recipeIngredients){
+        $em = $this->entityManager;
+        $query = $em->createQuery(
+            "SELECT r, i
+            FROM CookWithMeBundle:Recipe r
+            JOIN r.ingredients i
+            WHERE r. LIKE :title"
+        )->setParameters([
+            "recipe_ingredient" => $recipeIngredients
+        ])
+            ->setFirstResult($start)
+            ->setMaxResults($end);
+
+        $recipes = $query->getResult();
+        return $recipes;
+    }
+
+    /**
      * Adds a recipe.
      *
      * @param Recipe $recipeEntity
@@ -29,46 +55,50 @@ class RecipeManager {
     }
 
     /**
-     * get Recipes by title if passed/ not passed
-     *
      * @param integer $start
      * @param integer $end
-     * @param string $title
+     * @param null $title
+     * @param array $ingredientIds
      * @return array
      */
-    public function getRecipes($start,$end,$title){
+    public function getRecipes($start,$end,$title = null, $ingredientIds = []){
 
+        $em = $this->entityManager;
 
-        if($title == null){
-            $em = $this->entityManager;
-            $query = $em->createQuery(
-                "SELECT r
-            FROM CookWithMeBundle:Recipe r
-            "
-            )   ->setFirstResult($start)
-                ->setMaxResults($end);
+        $parameters = [];
 
-            $recipes = $query->getResult();
-            return $recipes;
-        }else{
-            $em = $this->entityManager;
-            $query = $em->createQuery(
-                "SELECT r
-            FROM CookWithMeBundle:Recipe r
-            WHERE r.title LIKE :title"
-            )->setParameters([
-                "title" => $title
-            ])
-                ->setFirstResult($start)
-                ->setMaxResults($end);
+        $queryString = "SELECT r
+                  FROM CookWithMeBundle:Recipe r";
 
-            $recipes = $query->getResult();
-            return $recipes;
+        //if($ingredientIds) {
+            $queryString .= " JOIN r.ingredients i";
+       // }
+        $queryString .= " WHERE 1=1 ";
+
+        if($title) {
+            $queryString .= " AND r.title LIKE :title";
+            $parameters['title'] = "%" . $title . "%";
         }
 
+//        if($ingredientIds) {
+//            $queryString .= " AND i.id IN (:ingIds)";
+//            $parameters['ingIds'] = $ingredientIds;
+//        }
 
+        if($ingredientIds) {
+            $queryString .= " AND i.id IN (:ingIds) Group by r.id";
+            $parameters['ingIds'] = $ingredientIds;
+        }
 
+        $query = $em->createQuery($queryString)
+                    ->setParameters($parameters)
+                    ->setFirstResult($start)
+                    ->setMaxResults($end);
 
+        //echo $query->getSQL();
+
+        $recipes = $query->getResult();
+        return $recipes;
     }
 
 
