@@ -23,8 +23,9 @@ class RecipeController extends Controller
     {
         $service = $this->get("recipe_service");
 
-        $title = $request->request->get('title');
-        $recipeEntities = $service->getRecipes($page, self::PAGE_SIZE, $title);
+        $title = $request->query->get('title');
+        $ingredientIds = $request->query->get('ingredientIds');
+        $recipeEntities = $service->getRecipes($page, self::PAGE_SIZE, $title, $ingredientIds);
         $recipeModels = array();
         foreach ($recipeEntities as $recipe) {
             $model = new RecipeModel($recipe);

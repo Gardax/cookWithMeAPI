@@ -61,7 +61,7 @@ class RecipeService {
      * @param string $title
      * @return array
      */
-    public function getRecipes($page,$pageSize,$title){
+    public function getRecipes($page,$pageSize,$title = null, $ingredientIds = []){
 
         if($page < 1){
             $page = 1;
@@ -72,7 +72,7 @@ class RecipeService {
 
 
 
-        $recipes = $this->recipeManager->getRecipes($start,$end,$title);
+        $recipes = $this->recipeManager->getRecipes($start,$end,$title, $ingredientIds);
         return $recipes;
     }
 
