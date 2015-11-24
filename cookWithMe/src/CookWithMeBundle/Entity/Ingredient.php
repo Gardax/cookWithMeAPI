@@ -32,6 +32,7 @@ class Ingredient
      */
     protected $recipes;
 
+
     public function __construct() {
         $this->recipes = new \Doctrine\Common\Collections\ArrayCollection();
     }

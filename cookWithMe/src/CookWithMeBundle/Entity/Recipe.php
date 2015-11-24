@@ -106,4 +106,29 @@ class Recipe {
     {
         return $this->cookTime;
     }
+
+    /**
+     * @param Step $step
+     */
+    public function addStep(Step $step){
+        $this->steps[] = $step;
+    }
+
+    /**
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getSteps() {
+        return $this->steps;
+    }
+
+    /**
+     * @param Ingredient $ingredient
+     */
+    public function addIngredient(Ingredient $ingredient){
+        $this->ingredients[] = $ingredient;
+    }
+
+    public function getIngredients(){
+        return $this->ingredients;
+    }
 }

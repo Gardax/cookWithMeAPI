@@ -21,12 +21,32 @@ class RecipeModel {
      */
     public $cookTime;
 
+    /**
+     * @var StepModel
+     */
+    public $steps;
+
+    /**
+     * @var IngredientModel
+     */
+    public $ingredients;
+
 
     function __construct(Recipe $recipe)
     {
         $this->id = $recipe->getId();
         $this->title = $recipe->getTitle();
         $this->cookTime = $recipe->getCookTime();
+
+        $this->steps = [];
+        foreach($recipe->getSteps() as $step) {
+            $this->steps[] = new StepModel($step);
+        }
+
+        $this->ingredients = [];
+        foreach($recipe->getIngredients() as $ingredient){
+            $this->ingredients[] = new IngredientModel($ingredient);
+        }
     }
 
     /**

@@ -43,7 +43,10 @@ class RecipeController extends Controller
         $recipeData = [
             'title' => $request->request->get('title'),
             'cookTime' => $request->request->get('cookTime'),
+            'steps' => $request->request->get('steps'),
+            'ingredients' => $request->request->get('ingredients'),
         ];
+
 
         $recipeEntity = $recipeService->addRecipe($recipeData);
         $recipeModel = new RecipeModel($recipeEntity);
@@ -52,7 +55,7 @@ class RecipeController extends Controller
     }
 
     /**
-     * @Route("/recipe/{id}", name="getRecipeById")
+     * @Route("/recipe/single/{id}", name="getRecipeById")
      * @Method({"GET"})
      */
     public function getRecipeAction($id)

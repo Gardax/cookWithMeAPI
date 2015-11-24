@@ -6,7 +6,7 @@ parameters:
 services:
     recipe_service:
         class: CookWithMeBundle\Services\RecipeService
-        arguments: [@recipe_manager]
+        arguments: [@recipe_manager,@step_service, @ingredient_service]
 
     recipe_manager:
         class: CookWithMeBundle\Managers\RecipeManager
@@ -19,3 +19,10 @@ services:
     step_manager:
         class: CookWithMeBundle\Managers\StepManager
         arguments: [@doctrine.orm.default_entity_manager]
+
+    ingredient_service:
+           class: CookWithMeBundle\Services\IngredientService
+           arguments: [@ingredient_manager]
+    ingredient_manager:
+           class: CookWithMeBundle\Managers\IngredientManager
+           arguments: [@doctrine.orm.default_entity_manager]

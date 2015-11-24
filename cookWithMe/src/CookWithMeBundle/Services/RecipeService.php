@@ -1,6 +1,7 @@
 <?php
 namespace CookWithMeBundle\Services;
 
+use CookWithMeBundle\Entity\Ingredient;
 use CookWithMeBundle\Entity\Recipe;
 use CookWithMeBundle\Managers\RecipeManager;
 
@@ -11,16 +12,29 @@ class RecipeService {
     protected $recipeManager;
 
     /**
-     * @param RecipeManager $recipeManager
+     * @var StepService
      */
-    public function __construct(RecipeManager $recipeManager) {
+    protected $stepService;
+
+    /**
+     * @var IngredientService
+     */
+    protected $ingredientService;
+    /**
+     * @param RecipeManager $recipeManager
+     * @param StepService $stepService
+     */
+    public function __construct(RecipeManager $recipeManager, StepService $stepService, IngredientService $ingredientService) {
         $this->recipeManager = $recipeManager;
+        $this->stepService = $stepService;
+        $this->ingredientService = $ingredientService;
     }
 
     /**
      * Adds a new recipe.
      *
      * @param Array $recipeData
+     * @param Array $ingredientData
      * @return Recipe
      */
     public function addRecipe($recipeData) {
@@ -28,7 +42,15 @@ class RecipeService {
         $recipeEntity->setTitle($recipeData['title']);
         $recipeEntity->setCookTime($recipeData['cookTime']);
 
-        return $this->recipeManager->addRecipe($recipeEntity);
+        $this->recipeManager->addRecipe($recipeEntity);
+
+        $this->addStepsToRecipe($recipeEntity, $recipeData['steps']);
+
+        $this->addIngredientsToRecipe($recipeEntity, $recipeData['ingredients']);
+
+        $this->recipeManager->saveChanges();
+
+        return $recipeEntity;
     }
 
     /**
@@ -96,9 +118,27 @@ class RecipeService {
 
         return $result;
     }
-    
-    public function addStepsToRecipe(Recipe $recipe, $stepsData){
 
+    /**
+     * @param Recipe $recipe
+     * @param $stepsData
+     */
+    public function addStepsToRecipe(Recipe $recipe, $stepsData){
+       $steps =  $this->stepService->createSteps($stepsData);
+        foreach($steps as $step){
+            $recipe->addStep($step);
+        }
+    }
+
+    /**
+     * @param Recipe $recipe
+     * @param $ingredientsData
+     */
+    public function addIngredientsToRecipe(Recipe $recipe, $ingredientsData){
+        $ingredients = $this->ingredientService->createIngredients($ingredientsData);
+        foreach($ingredients as $ingredient){
+            $recipe->addIngredient($ingredient);
+        }
     }
 
 }

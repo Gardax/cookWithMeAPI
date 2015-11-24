@@ -11,6 +11,7 @@ namespace CookWithMeBundle\Services;
 use CookWithMeBundle\Entity\Step;
 use CookWithMeBundle\Managers\StepManager;
 
+
 class StepService
 {
     /**
@@ -24,14 +25,23 @@ class StepService
     public function __construct(StepManager $stepManager) {
         $this->stepManager = $stepManager;
     }
-    public function createSteps($stepsData){
 
-        foreach($stepsData as $step){
+    /**
+     * @param $stepsData
+     * @return array
+     */
+    public function createSteps($stepsData){
+        $steps = array();
+        foreach($stepsData as $entityData){
             $stepEntity = new Step();
-            $stepEntity->setAction($step['action']);
-            $stepEntity->setEstimatedTime($step['estimatedTime']);
+            $stepEntity->setAction($entityData['action']);
+            $stepEntity->setEstimatedTime($entityData['estimatedTime']);
             $this->stepManager->persistStep($stepEntity);
+
+            $steps[] = $stepEntity;
         }
         $this->stepManager->saveChanges();
+
+        return $steps;
     }
 }

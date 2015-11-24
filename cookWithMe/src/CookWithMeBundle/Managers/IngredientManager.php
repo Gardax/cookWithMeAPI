@@ -2,16 +2,16 @@
 /**
  * Created by PhpStorm.
  * User: dahaka
- * Date: 11/22/15
- * Time: 5:03 PM
+ * Date: 11/23/15
+ * Time: 9:04 PM
  */
 
 namespace CookWithMeBundle\Managers;
 
-use CookWithMeBundle\Entity\Step;
+use CookWithMeBundle\Entity\Ingredient;
 use Doctrine\ORM\EntityManager;
 
-class StepManager
+class IngredientManager
 {
     /**
      * @var EntityManager
@@ -26,11 +26,12 @@ class StepManager
     }
 
     /**
-     * @param Step $step
+     * @param Ingredient $ingredient
      */
-    public function persistStep(Step $step){
-        $this->entityManager->persist($step);
+    public function persistStep(Ingredient $ingredient){
+        $this->entityManager->persist($ingredient);
     }
+
     public function saveChanges(){
         $this->entityManager->flush();
     }
