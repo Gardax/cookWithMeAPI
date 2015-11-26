@@ -19,6 +19,7 @@ class RecipeController extends Controller
     const SUCCESS = 1;
     const FAIL = 0;
     const PAGE_SIZE = 10;
+    const MIN_TITLE_LENGTH = 4;
 
     /**
      * @Route("/recipe/{page}", defaults={"page" = 1})]
@@ -26,15 +27,14 @@ class RecipeController extends Controller
     public function indexAction(Request $request, $page)
     {
         try{
-
+            if(!isset($page)){
+                throw new \Exception("You must enter a number for indexer!");
+            }
             if(!is_numeric($page)){
                 throw new \Exception("The page indexer must be number!");
             }
             if($page < 1){
                 throw new \Exception("The page indexer can be only positive number !");
-            }
-            if(!isset($page)){
-                throw new \Exception("You must enter a number for indexer!");
             }
 
             $service = $this->get("recipe_service");
@@ -48,23 +48,12 @@ class RecipeController extends Controller
                 $recipeModels[] = $model;
 
             }
-            /**
-             * check if the returned result is empty[] (means that there are no result for that page)
-             */
-            if(empty($recipeModels)){
-                throw new \Exception("There is no data to this page !");
-            }
-
-
-            if (!$recipeModels) {
-                throw $this->createNotFoundException('WTF');
-            }
 
             return new JsonResponse($recipeModels);
         }catch (\Exception $ex){
             return new JsonResponse([
                 "error" => $ex->getMessage(),
-                "success" => 0
+                "success" => self::FAIL
             ]);
         }
     }
@@ -105,7 +94,7 @@ class RecipeController extends Controller
             if(isset($recipeData['title']) && is_numeric($recipeData['title'])){
                 throw new \Exception("The recipe must have title described with letters only! Are you missing something?");
             }
-            if(isset($recipeData['cookTime'])  && is_string($recipeData['cookTime'])){
+            if(isset($recipeData['cookTime'])  && !is_string($recipeData['cookTime'])){
                 throw new \Exception("The recipe cookTime must be described with numbers!Are you miss something ?");
             }
             if(isset($recipeData['steps'])  && is_numeric($recipeData['steps'])){
@@ -123,11 +112,6 @@ class RecipeController extends Controller
                 throw new \Exception("You can not assign a number for a name of ingredient!");
             }
 
-
-
-
-
-
             $recipeEntity = $recipeService->addRecipe($recipeData);
             $recipeModel = new RecipeModel($recipeEntity);
 
@@ -136,7 +120,7 @@ class RecipeController extends Controller
         }catch (\Exception $ex){
             return new JsonResponse([
                 "error" => $ex->getMessage(),
-                "success" => 0
+                "success" => self::FAIL
             ]);
         }
 
@@ -149,21 +133,17 @@ class RecipeController extends Controller
     public function getRecipeAction($id)
     {
         try{
-            if($id){
-                if(!is_numeric($id)){
-                    throw new \Exception("The identifier for the recipe must be a number! ");
-                }elseif(is_null($id)){
-                    throw new \Exception("The assign identifier for a recipe!");
-                }elseif($id < 1){
-                    throw new \Exception("The recipe identificator must start from 1 and can not be negative number");
-                }
+            if(!$id || !is_numeric($id)){
+                throw new \Exception("The identifier for the recipe must be a number! ");
+            }elseif($id < 1){
+                throw new \Exception("The recipe identificator can not be a negative number.");
             }
 
             $recipeService = $this->get("recipe_service");
 
             $recipeEntity = $recipeService->getRecipeById($id);
-            if(!$recipeEntity instanceof Recipe){
-                throw new Exception("There is no such identificator for a recipe");
+            if(!$recipeEntity){
+                throw new Exception("Recipe not found.");
             }
             $recipeModel = new RecipeModel($recipeEntity);
 
@@ -171,7 +151,7 @@ class RecipeController extends Controller
         }catch (\Exception $ex){
             return new JsonResponse([
                 "error" => $ex->getMessage(),
-                "success" => 0
+                "success" => self::FAIL
             ]);
         }
 
@@ -184,21 +164,11 @@ class RecipeController extends Controller
     public function updateRecipeById(Request $request, $id)
     {
         try{
-            /**
-             * check the value of the variable $id
-             */
-            if($id){
-                if(!is_numeric($id)){
-                    throw new \Exception("The identifier for the recipe must be a number! ");
-                }elseif(is_null($id)){
-                    throw new \Exception("The assign identifier for a recipe!");
-                }elseif($id < 1){
-                    throw new \Exception("The recipe identificator must start from 1 and can not be negative number");
-                }
+            if(!$id || !is_numeric($id)){
+                throw new \Exception("The identifier for the recipe must be a number! ");
+            }elseif($id < 1){
+                throw new \Exception("The recipe identificator can not be a negative number.");
             }
-            /**
-             * end of the check
-             */
 
             $recipeService = $this->get("recipe_service");
 
@@ -212,17 +182,17 @@ class RecipeController extends Controller
             /**
              * error handling for a non existing values of variables and setting wrong type of data to the variables
              */
-            if(!isset($recipeData['title']) || is_null($recipeData['title'])){
+            if(!isset($recipeData['title']) || count($recipeData['title']) < self::MIN_TITLE_LENGTH ){
                 throw new \Exception("The recipe must have a title!Are you miss something ?");
             }
-            if(!isset($recipeData['cookTime']) || is_null($recipeData['cookTime'])){
+            if(!isset($recipeData['cookTime']) || !$recipeData['cookTime']){
                 throw new \Exception("The recipe must have a cookTime!Are you miss something ?");
             }
             if(isset($recipeData['title']) && is_numeric($recipeData['title'])){
-                throw new \Exception("The recipe must have title described with letters only! Are you missing something?");
+                throw new \Exception("The recipe must have title described with letters only!");
             }
             if(isset($recipeData['cookTime'])  && is_string($recipeData['cookTime'])){
-                throw new \Exception("The recipe cookTime must be described with numbers!Are you miss something ?");
+                throw new \Exception("The recipe cookTime must be described with numbers!");
             }
             /**
              * end of error handling
@@ -235,7 +205,7 @@ class RecipeController extends Controller
         }catch (\Exception $ex){
             return new JsonResponse([
                 "error" => $ex->getMessage(),
-                "success" => 0
+                "success" => self::FAIL
             ]);
         }
 
@@ -248,22 +218,11 @@ class RecipeController extends Controller
     public function deleteRecipeById(Request $request, $id)
     {
         try {
-
-            /**
-             * check the value of the variable $id
-             */
-            if($id){
-                if(!is_numeric($id)){
-                    throw new \Exception("The identifier for the recipe must be a number! ");
-                }elseif(is_null($id)){
-                    throw new \Exception("The assign identifier for a recipe!");
-                }elseif($id < 1){
-                    throw new \Exception("The recipe identificator must start from 1 and can not be negative number");
-                }
+            if(!$id || !is_numeric($id)){
+                throw new \Exception("The identifier for the recipe must be a number! ");
+            }elseif($id < 1){
+                throw new \Exception("The recipe identificator can not be a negative number.");
             }
-            /**
-             * end of the check
-             */
 
             $recipeService = $this->get("recipe_service");
 
@@ -280,7 +239,7 @@ class RecipeController extends Controller
             }catch (\Exception $ex){
             return new JsonResponse([
                 "error" => $ex->getMessage(),
-                "success" => 0
+                "success" => self::FAIL
             ]);
         }
     }
