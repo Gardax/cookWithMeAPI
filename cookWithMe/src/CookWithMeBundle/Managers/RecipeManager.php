@@ -71,7 +71,7 @@ class RecipeManager {
                   FROM CookWithMeBundle:Recipe r";
 
         //if($ingredientIds) {
-            $queryString .= " JOIN r.ingredients i";
+//            $queryString .= " JOIN r.ingredients i";
        // }
         $queryString .= " WHERE 1=1 ";
 
@@ -85,10 +85,10 @@ class RecipeManager {
 //            $parameters['ingIds'] = $ingredientIds;
 //        }
 
-        if($ingredientIds) {
-            $queryString .= " AND i.id IN (:ingIds) Group by r.id";
-            $parameters['ingIds'] = $ingredientIds;
-        }
+//        if($ingredientIds) {
+//            $queryString .= " AND i.id IN (:ingIds) Group by r.id";
+//            $parameters['ingIds'] = $ingredientIds;
+//        }
 
         $query = $em->createQuery($queryString)
                     ->setParameters($parameters)

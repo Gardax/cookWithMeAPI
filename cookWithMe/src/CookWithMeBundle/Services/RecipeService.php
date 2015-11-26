@@ -31,10 +31,9 @@ class RecipeService {
     }
 
     /**
-     * Adds a new recipe.
+     * adds recipe
      *
-     * @param Array $recipeData
-     * @param Array $ingredientData
+     * @param $recipeData
      * @return Recipe
      */
     public function addRecipe($recipeData) {
@@ -66,7 +65,6 @@ class RecipeService {
         if($page < 1){
             $page = 1;
         }
-
         $start = ($page -1) *$pageSize;
         $end = $start + $pageSize;
 
