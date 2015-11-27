@@ -42,6 +42,9 @@ class RecipeController extends Controller
             $title = $request->query->get('title');
             $ingredientIds = $request->query->get('ingredientIds');
             $recipeEntities = $service->getRecipes($page, self::PAGE_SIZE, $title, $ingredientIds);
+            if(!$recipeEntities){
+                throw new \Exception("There is not result!");
+            }
             $recipeModels = array();
             foreach ($recipeEntities as $recipe) {
                 $model = new RecipeModel($recipe);
@@ -75,42 +78,27 @@ class RecipeController extends Controller
             /**
              * Error Handling for exceptions if some of the params for recipeData[] are missing
              */
-            if(!isset($recipeData['title']) || is_null($recipeData['title'])){
-                throw new \Exception("The recipe must have a title!Are you miss something ?");
+            if(count($recipeData['ingredients']) < 1){
+                throw new \Exception("The recipe must have at least 1 ingredient!");
             }
-            if(!isset($recipeData['cookTime']) || is_null($recipeData['cookTime'])){
+            if(count($recipeData['steps']) < 1){
+                throw new \Exception("The recipe must have at least 1 step! ");
+            }
+            if(!isset($recipeData['title']) || !is_string($recipeData['title'])){
+                throw new \Exception("There is a problem with the recipe title ?");
+            }
+            if(!isset($recipeData['cookTime'])){
                 throw new \Exception("The recipe must have a cookTime!Are you miss something ?");
             }
-            if(!isset($recipeData['steps']) || is_null($recipeData['steps'])){
+            if(!isset($recipeData['steps'])){
                 throw new \Exception("The recipe must have steps!Are you miss something ?");
             }
-            if(!isset($recipeData['ingredients']) || is_null($recipeData['ingredients'])){
+            if(!isset($recipeData['ingredients'])){
                 throw new \Exception("The recipe must have at least one ingredient!Are you miss something ?");
             }
             /**
              * Error handling for exceptions if some of the params passed to recipeData[] are wrong
              */
-
-            if(isset($recipeData['title']) && is_numeric($recipeData['title'])){
-                throw new \Exception("The recipe must have title described with letters only! Are you missing something?");
-            }
-            if(isset($recipeData['cookTime'])  && !is_string($recipeData['cookTime'])){
-                throw new \Exception("The recipe cookTime must be described with numbers!Are you miss something ?");
-            }
-            if(isset($recipeData['steps'])  && is_numeric($recipeData['steps'])){
-                throw new \Exception("The recipe must have steps described with letters!Are you miss something ?");
-            }
-            if(isset($recipeData['ingredients']) && is_numeric($recipeData['ingredients'])){
-
-                throw new \Exception("The recipe must have ingredients described with letters!Are you miss something ?");
-            }
-            if(is_numeric($recipeData['steps'][0]['action'])){
-                throw new \Exception("You can not assign a number for describing action for steps!");
-            }
-
-            if(is_numeric($recipeData['ingredients'][0]['name'])){
-                throw new \Exception("You can not assign a number for a name of ingredient!");
-            }
 
             $recipeEntity = $recipeService->addRecipe($recipeData);
             $recipeModel = new RecipeModel($recipeEntity);
@@ -133,11 +121,7 @@ class RecipeController extends Controller
     public function getRecipeAction($id)
     {
         try{
-            if(!$id || !is_numeric($id)){
-                throw new \Exception("The identifier for the recipe must be a number! ");
-            }elseif($id < 1){
-                throw new \Exception("The recipe identificator can not be a negative number.");
-            }
+            $id = $this->validateId($id);
 
             $recipeService = $this->get("recipe_service");
 
@@ -164,11 +148,8 @@ class RecipeController extends Controller
     public function updateRecipeById(Request $request, $id)
     {
         try{
-            if(!$id || !is_numeric($id)){
-                throw new \Exception("The identifier for the recipe must be a number! ");
-            }elseif($id < 1){
-                throw new \Exception("The recipe identificator can not be a negative number.");
-            }
+
+            $id = $this->validateId($id);
 
             $recipeService = $this->get("recipe_service");
 
@@ -185,18 +166,9 @@ class RecipeController extends Controller
             if(!isset($recipeData['title']) || count($recipeData['title']) < self::MIN_TITLE_LENGTH ){
                 throw new \Exception("The recipe must have a title!Are you miss something ?");
             }
-            if(!isset($recipeData['cookTime']) || !$recipeData['cookTime']){
+            if(!isset($recipeData['cookTime']) || !is_numeric($recipeData['cookTime'])){
                 throw new \Exception("The recipe must have a cookTime!Are you miss something ?");
             }
-            if(isset($recipeData['title']) && is_numeric($recipeData['title'])){
-                throw new \Exception("The recipe must have title described with letters only!");
-            }
-            if(isset($recipeData['cookTime'])  && is_string($recipeData['cookTime'])){
-                throw new \Exception("The recipe cookTime must be described with numbers!");
-            }
-            /**
-             * end of error handling
-             */
 
             $updatedRecipe = $recipeService->updateRecipe($recipeEntity, $recipeData);
 
@@ -218,11 +190,7 @@ class RecipeController extends Controller
     public function deleteRecipeById(Request $request, $id)
     {
         try {
-            if(!$id || !is_numeric($id)){
-                throw new \Exception("The identifier for the recipe must be a number! ");
-            }elseif($id < 1){
-                throw new \Exception("The recipe identificator can not be a negative number.");
-            }
+            $id = $this->validateId($id);
 
             $recipeService = $this->get("recipe_service");
 
@@ -242,5 +210,15 @@ class RecipeController extends Controller
                 "success" => self::FAIL
             ]);
         }
+    }
+
+    public function validateId($id){
+        if(!$id || !is_numeric($id)){
+            throw new \Exception("The identifier for the recipe must be a number! ");
+        }elseif($id < 1){
+            throw new \Exception("The recipe identificator can not be a negative number.");
+        }
+
+        return $id;
     }
 }
