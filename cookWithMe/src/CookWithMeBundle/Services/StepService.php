@@ -37,12 +37,14 @@ class StepService
     public function createSteps($stepsData){
         $steps = array();
         foreach($stepsData as $entityData){
-            $stepEntity = new Step();
-            $stepEntity->setAction($entityData['action']);
-            $stepEntity->setEstimatedTime($entityData['estimatedTime']);
-            $this->stepManager->persistStep($stepEntity);
+            if($entityData['action']) {
+                $stepEntity = new Step();
+                $stepEntity->setAction($entityData['action']);
+                $stepEntity->setEstimatedTime($entityData['estimatedTime']);
+                $this->stepManager->persistStep($stepEntity);
 
-            $steps[] = $stepEntity;
+                $steps[] = $stepEntity;
+            }
         }
         $this->stepManager->saveChanges();
 

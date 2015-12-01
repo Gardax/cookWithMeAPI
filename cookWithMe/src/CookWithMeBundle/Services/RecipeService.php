@@ -4,12 +4,18 @@ namespace CookWithMeBundle\Services;
 use CookWithMeBundle\Entity\Ingredient;
 use CookWithMeBundle\Entity\Recipe;
 use CookWithMeBundle\Managers\RecipeManager;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Class RecipeService
  * @package CookWithMeBundle\Services
  */
 class RecipeService {
+    /**
+     * @var int
+     */
+    const MIN_TITLE_LENGTH = 4;
+
     /**
      * @var RecipeManager
      */
@@ -40,8 +46,26 @@ class RecipeService {
      *
      * @param Array $recipeData
      * @return Recipe
+     * @throws \Exception
      */
     public function addRecipe($recipeData) {
+
+        if(count($recipeData['ingredients']) < 1){
+            throw new \Exception("The recipe must have at least 1 ingredient!");
+        }
+        if(count($recipeData['steps']) < 1){
+            throw new \Exception("The recipe must have at least 1 step! ");
+        }
+        if(!isset($recipeData['title']) || !is_string($recipeData['title'])){
+            throw new \Exception("There is a problem with the recipe title ?");
+        }
+        if(!isset($recipeData['steps'])){
+            throw new \Exception("The recipe must have steps!Are you miss something ?");
+        }
+        if(!isset($recipeData['ingredients'])){
+            throw new \Exception("The recipe must have at least one ingredient!Are you miss something ?");
+        }
+
         $recipeEntity = new Recipe();
         $recipeEntity->setTitle($recipeData['title']);
 
@@ -57,37 +81,52 @@ class RecipeService {
     }
 
     /**
-     * return Recipes with limit per page
+     * Gets Recipes with limit per page
      *
      * @param $page
      * @param $pageSize
      * @param null $title
      * @param array $ingredientIds
      * @return array
+     * @throws \Exception
      */
+
     public function getRecipes($page,$pageSize,$title = null, $ingredientIds = []){
 
-        if($page < 1){
-            $page = 1;
+        if(!isset($page)){
+            throw new \Exception("You must enter a number for indexer!");
         }
+        if(!is_numeric($page)){
+            throw new \Exception("The page indexer must be number!");
+        }
+        if($page < 1){
+            throw new \Exception("The page indexer can be only positive number !");
+        }
+        
         $start = ($page -1) *$pageSize;
         $end = $start + $pageSize;
 
-
-
         $recipes = $this->recipeManager->getRecipes($start,$end,$title, $ingredientIds);
+        if(!$recipes){
+            throw new \Exception("There is not result!");
+        }
         return $recipes;
     }
 
     /**
-     * return Recipe by Id
+     * Gets Recipe by Id
      *
      * @param $id
      * @return Recipe|null
      */
     public function getRecipeById($id){
-        $recipe = $this->recipeManager->getRecipeById($id);
 
+        $id = $this->validateId($id);
+
+        $recipe = $this->recipeManager->getRecipeById($id);
+        if(!$recipe){
+            throw new Exception("Recipe not found.");
+        }
         return $recipe;
     }
 
@@ -97,8 +136,14 @@ class RecipeService {
      * @param Recipe $recipe
      * @param $recipeData
      * @return Recipe
+     * @throws \Exception
      */
+
     public function updateRecipe(Recipe $recipe,$recipeData){
+        if(!isset($recipeData['title']) || count($recipeData['title']) < self::MIN_TITLE_LENGTH ){
+            throw new \Exception("The recipe must have a title!Are you miss something ?");
+        }
+
         if(isset($recipeData['title'])){
             $recipe->setTitle($recipeData['title']);
         }
@@ -114,6 +159,7 @@ class RecipeService {
      * @return boolean
      */
     public function deleteRecipeById($id){
+        $id = $this->validateId($id);
         $result = $this->recipeManager->deleteRecipeById($id);
 
         return $result;
@@ -139,6 +185,21 @@ class RecipeService {
         foreach($ingredients as $ingredient){
             $recipe->addIngredient($ingredient);
         }
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     * @throws \Exception
+     */
+    public function validateId($id){
+        if(!$id || !is_numeric($id)){
+            throw new \Exception("The identifier for the recipe must be a number! ");
+        }elseif($id < 1){
+            throw new \Exception("The recipe identificator can not be a negative number.");
+        }
+
+        return $id;
     }
 
 }

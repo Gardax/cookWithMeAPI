@@ -37,6 +37,7 @@ class IngredientService
     public function createIngredients($ingredientsData){
         $ingredients = array();
         foreach($ingredientsData as $entityData){
+            //TODO: If the name is empty skip the adding
             $ingredientEntity = new Ingredient();
             $ingredientEntity->setName($entityData['name']);
             $this->ingredientManager->persistStep($ingredientEntity);
