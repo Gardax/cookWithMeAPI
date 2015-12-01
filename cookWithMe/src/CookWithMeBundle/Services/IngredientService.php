@@ -48,4 +48,13 @@ class IngredientService
 
         return $ingredients;
     }
+
+    /**
+     * @param $name
+     * @return Ingredient[]
+     */
+    public function getIngredient($name){
+        $ingredients = $this->ingredientManager->getIngredientsByName($name);
+        return $ingredients;
+    }
 }

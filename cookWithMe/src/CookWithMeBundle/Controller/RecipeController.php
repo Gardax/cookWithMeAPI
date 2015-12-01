@@ -120,8 +120,11 @@ class RecipeController extends Controller
             $recipeEntity = $recipeService->getRecipeById($id);
 
             $recipeData = [
-                'title' => $request->request->get('title')
+                'title' => $request->request->get('title'),
+                'steps' => $request->request->get('steps'),
+                'ingredients' => $request->request->get('ingredients')
             ];
+
             $updatedRecipe = $recipeService->updateRecipe($recipeEntity, $recipeData);
 
             $recipeModel = new RecipeModel($updatedRecipe);

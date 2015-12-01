@@ -92,13 +92,30 @@ class Recipe {
     }
 
     /**
+     * @param $steps
+     */
+    public function setSteps($steps){
+        $this->steps = $steps;
+    }
+
+    /**
      * @param Ingredient $ingredient
      */
     public function addIngredient(Ingredient $ingredient){
         $this->ingredients[] = $ingredient;
     }
 
+    /**
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
     public function getIngredients(){
         return $this->ingredients;
+    }
+
+    /**
+     * @param $ingredients
+     */
+    public function setIngredients($ingredients){
+        $this->ingredients = $ingredients;
     }
 }

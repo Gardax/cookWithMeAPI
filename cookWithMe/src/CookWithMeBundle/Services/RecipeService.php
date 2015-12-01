@@ -140,13 +140,26 @@ class RecipeService {
      */
 
     public function updateRecipe(Recipe $recipe,$recipeData){
-        if(!isset($recipeData['title']) || count($recipeData['title']) < self::MIN_TITLE_LENGTH ){
-            throw new \Exception("The recipe must have a title!Are you miss something ?");
-        }
+//        if(!isset($recipeData['title']) || count($recipeData['title']) < self::MIN_TITLE_LENGTH ){
+//            throw new \Exception("The recipe must have a title!Are you miss something ?");
+//        }
 
         if(isset($recipeData['title'])){
             $recipe->setTitle($recipeData['title']);
         }
+
+
+        if(isset($recipeData['steps'])){
+            $recipe->setSteps(array());
+            $this->addStepsToRecipe($recipe,$recipeData['steps']);
+        }
+        if(isset($recipeData['ingredients'])){
+            $recipe->setIngredients(array());
+            $this->addIngredientsToRecipe($recipe,$recipeData['ingredients']);
+        }
+
+
+
         $this->recipeManager->saveChanges();
 
         return $recipe;
@@ -181,7 +194,29 @@ class RecipeService {
      * @param $ingredientsData
      */
     public function addIngredientsToRecipe(Recipe $recipe, $ingredientsData){
-        $ingredients = $this->ingredientService->createIngredients($ingredientsData);
+
+        $names = array();
+        foreach($ingredientsData as $ingredient){
+            $names[]=$ingredient['name'];
+        }
+
+        $missingIngredients = array();
+        $ingredientEntity = $this->ingredientService->getIngredient($names);
+
+        foreach($ingredientsData as $ingredient){
+            $found = false;
+            for($i = 0; $i < count($ingredientEntity); $i++){
+                if($ingredient['name'] == $ingredientEntity[$i]->getName()) {
+                    $found = true;
+                }
+            }
+            if(!$found) {
+                array_push($missingIngredients, $ingredient);
+            }
+        }
+
+        $ingredients = $this->ingredientService->createIngredients($missingIngredients);
+        $ingredients = array_merge($ingredients, $ingredientEntity);
         foreach($ingredients as $ingredient){
             $recipe->addIngredient($ingredient);
         }

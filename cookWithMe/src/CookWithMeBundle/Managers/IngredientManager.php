@@ -39,4 +39,18 @@ class IngredientManager
     public function saveChanges(){
         $this->entityManager->flush();
     }
+
+    /**
+     * @param $names
+     * @return array
+     */
+    public function getIngredientsByName($names){
+
+        $query = $this->entityManager->createQuery('SELECT i FROM CookWithMeBundle:Ingredient i WHERE i.name IN (:names)');
+        $query->setParameters(array(
+            'names'=>$names
+        ));
+        $ingredients = $query->getResult();
+        return $ingredients;
+    }
 }
