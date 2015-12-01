@@ -6,6 +6,10 @@ namespace CookWithMeBundle\Managers;
 use CookWithMeBundle\Entity\Recipe;
 use Doctrine\ORM\EntityManager;
 
+/**
+ * Class RecipeManager
+ * @package CookWithMeBundle\Managers
+ */
 class RecipeManager {
     /**
      * @var EntityManager

@@ -12,6 +12,10 @@ namespace CookWithMeBundle\Services;
 use CookWithMeBundle\Entity\Ingredient;
 use CookWithMeBundle\Managers\IngredientManager;
 
+/**
+ * Class IngredientService
+ * @package CookWithMeBundle\Services
+ */
 class IngredientService
 {
     /**

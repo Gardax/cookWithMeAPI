@@ -12,6 +12,10 @@ use CookWithMeBundle\Entity\Step;
 use CookWithMeBundle\Managers\StepManager;
 
 
+/**
+ * Class StepService
+ * @package CookWithMeBundle\Services
+ */
 class StepService
 {
     /**
@@ -28,7 +32,7 @@ class StepService
 
     /**
      * @param $stepsData
-     * @return array
+     * @return Step[]
      */
     public function createSteps($stepsData){
         $steps = array();

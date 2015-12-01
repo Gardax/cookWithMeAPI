@@ -11,13 +11,22 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * Class RecipeController
+ * @package CookWithMeBundle\Controller
+ */
 class RecipeController extends Controller
 {
     const SUCCESS = 1;
     const FAIL = 0;
     const PAGE_SIZE = 10;
+
+
     /**
      * @Route("/recipe/{page}", defaults={"page" = 1})]
+     * @param Request $request
+     * @param $page
+     * @return JsonResponse
      */
     public function indexAction(Request $request, $page)
     {
@@ -37,13 +46,14 @@ class RecipeController extends Controller
     /**
      * @Route("/add" , name="addRecipe")
      * @Method({"POST"})
+     * @param Request $request
+     * @return JsonResponse
      */
     public function addAction(Request $request)
     {
         $recipeService = $this->get('recipe_service');
         $recipeData = [
             'title' => $request->request->get('title'),
-            'cookTime' => $request->request->get('cookTime'),
             'steps' => $request->request->get('steps'),
             'ingredients' => $request->request->get('ingredients'),
         ];

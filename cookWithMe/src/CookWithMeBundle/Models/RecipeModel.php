@@ -5,6 +5,10 @@ namespace CookWithMeBundle\Models;
 
 use CookWithMeBundle\Entity\Recipe;
 
+/**
+ * Class RecipeModel
+ * @package CookWithMeBundle\Models
+ */
 class RecipeModel {
     /**
      * @var int
@@ -15,11 +19,6 @@ class RecipeModel {
      * @var string
      */
     public $title;
-
-    /**
-     * @var int
-     */
-    public $cookTime;
 
     /**
      * @var StepModel
@@ -36,7 +35,6 @@ class RecipeModel {
     {
         $this->id = $recipe->getId();
         $this->title = $recipe->getTitle();
-        $this->cookTime = $recipe->getCookTime();
 
         $this->steps = [];
         foreach($recipe->getSteps() as $step) {
@@ -79,22 +77,6 @@ class RecipeModel {
     public function setTitle($title)
     {
         $this->title = $title;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCookTime()
-    {
-        return $this->cookTime;
-    }
-
-    /**
-     * @param int $cookTime
-     */
-    public function setCookTime($cookTime)
-    {
-        $this->cookTime = $cookTime;
     }
 
 }

@@ -28,13 +28,7 @@ class Recipe {
     protected $title;
 
     /**
-     * @ORM\Column(type="integer")
-     */
-    protected $cookTime;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Step", inversedBy="recipes")
-     * @ORM\JoinTable(name="recipes_steps")
+     * @ORM\OneToMany(targetEntity="Step", mappedBy="recipe")
      */
     protected $steps;
 
@@ -81,30 +75,6 @@ class Recipe {
     public function getTitle()
     {
         return $this->title;
-    }
-
-    /**
-     * Set cookTime
-     *
-     * @param integer $cookTime
-     *
-     * @return Recipe
-     */
-    public function setCookTime($cookTime)
-    {
-        $this->cookTime = $cookTime;
-
-        return $this;
-    }
-
-    /**
-     * Get cookTime
-     *
-     * @return integer
-     */
-    public function getCookTime()
-    {
-        return $this->cookTime;
     }
 
     /**

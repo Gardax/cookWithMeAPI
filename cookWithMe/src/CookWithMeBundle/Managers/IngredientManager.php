@@ -11,6 +11,10 @@ namespace CookWithMeBundle\Managers;
 use CookWithMeBundle\Entity\Ingredient;
 use Doctrine\ORM\EntityManager;
 
+/**
+ * Class IngredientManager
+ * @package CookWithMeBundle\Managers
+ */
 class IngredientManager
 {
     /**

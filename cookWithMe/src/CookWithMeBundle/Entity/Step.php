@@ -33,9 +33,26 @@ class Step
     protected $estimatedTime;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Recipe", mappedBy="recipes")
+     * @ORM\ManyToOne(targetEntity="Recipe")
+     * @ORM\JoinColumn(name="recipe_id", referencedColumnName="id")
      */
-    protected $recipes;
+    protected $recipe;
+
+    /**
+     * @return mixed
+     */
+    public function getRecipe()
+    {
+        return $this->recipe;
+    }
+
+    /**
+     * @param mixed $recipe
+     */
+    public function setRecipe($recipe)
+    {
+        $this->recipe = $recipe;
+    }
 
     public function __construct() {
         $this->recipes = new \Doctrine\Common\Collections\ArrayCollection();
@@ -93,6 +110,5 @@ class Step
     {
         $this->estimatedTime = $estimatedTime;
     }
-
 
 }

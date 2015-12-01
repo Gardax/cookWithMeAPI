@@ -11,6 +11,10 @@ namespace CookWithMeBundle\Managers;
 use CookWithMeBundle\Entity\Step;
 use Doctrine\ORM\EntityManager;
 
+/**
+ * Class StepManager
+ * @package CookWithMeBundle\Managers
+ */
 class StepManager
 {
     /**

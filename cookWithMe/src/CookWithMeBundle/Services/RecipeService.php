@@ -5,6 +5,10 @@ use CookWithMeBundle\Entity\Ingredient;
 use CookWithMeBundle\Entity\Recipe;
 use CookWithMeBundle\Managers\RecipeManager;
 
+/**
+ * Class RecipeService
+ * @package CookWithMeBundle\Services
+ */
 class RecipeService {
     /**
      * @var RecipeManager
@@ -23,6 +27,7 @@ class RecipeService {
     /**
      * @param RecipeManager $recipeManager
      * @param StepService $stepService
+     * @param IngredientService $ingredientService
      */
     public function __construct(RecipeManager $recipeManager, StepService $stepService, IngredientService $ingredientService) {
         $this->recipeManager = $recipeManager;
@@ -34,13 +39,11 @@ class RecipeService {
      * Adds a new recipe.
      *
      * @param Array $recipeData
-     * @param Array $ingredientData
      * @return Recipe
      */
     public function addRecipe($recipeData) {
         $recipeEntity = new Recipe();
         $recipeEntity->setTitle($recipeData['title']);
-        $recipeEntity->setCookTime($recipeData['cookTime']);
 
         $this->recipeManager->addRecipe($recipeEntity);
 
@@ -56,9 +59,10 @@ class RecipeService {
     /**
      * return Recipes with limit per page
      *
-     * @param integer $page
-     * @param integer $pageSize
-     * @param string $title
+     * @param $page
+     * @param $pageSize
+     * @param null $title
+     * @param array $ingredientIds
      * @return array
      */
     public function getRecipes($page,$pageSize,$title = null, $ingredientIds = []){
@@ -99,9 +103,6 @@ class RecipeService {
         if(isset($recipeData['title'])){
             $recipe->setTitle($recipeData['title']);
         }
-        if(isset($recipeData['cookTime'])){
-            $recipe->setCookTime($recipeData['cookTime']);
-        }
         $this->recipeManager->saveChanges();
 
         return $recipe;
@@ -126,7 +127,7 @@ class RecipeService {
     public function addStepsToRecipe(Recipe $recipe, $stepsData){
        $steps =  $this->stepService->createSteps($stepsData);
         foreach($steps as $step){
-            $recipe->addStep($step);
+            $step->setRecipe($recipe);
         }
     }
 

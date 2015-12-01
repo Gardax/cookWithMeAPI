@@ -32,6 +32,7 @@ class StepModel
      */
     public $estimatedTime;
 
+
     /**
      * @param Step $step
      */
@@ -39,7 +40,7 @@ class StepModel
     {
         $this->id = $step->getId();
         $this->action = $step->getAction();
-        $this->estimatedTime = $step->getEstimatedTime();
+        $this->estimatedTime = $step->getEstimatedTime();;
     }
 
     /**
@@ -89,10 +90,5 @@ class StepModel
     {
         $this->estimatedTime = $estimatedTime;
     }
-
-
-
-
-
 
 }
