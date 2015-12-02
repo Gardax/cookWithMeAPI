@@ -164,4 +164,12 @@ class RecipeController extends Controller
             ]);
         }
     }
+
+    /**
+     * @Route("/recipe/rate/{id}", name="setRecipeRating")
+     * @Method("DELETE")
+     */
+    public function setRecipeRating(Request $request, $id){
+
+    }
 }

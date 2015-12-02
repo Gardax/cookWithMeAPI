@@ -28,6 +28,16 @@ class Recipe {
     protected $title;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    protected $isPublic;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    protected $isApproved;
+
+    /**
      * @ORM\OneToMany(targetEntity="Step", mappedBy="recipe")
      */
     protected $steps;
@@ -38,9 +48,15 @@ class Recipe {
      */
     protected $ingredients;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Rating", mappedBy="recipe")
+     */
+    protected $ratings;
+
     public function __construct() {
         $this->steps = new \Doctrine\Common\Collections\ArrayCollection();
         $this->ingredients = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->ratings = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -96,6 +112,38 @@ class Recipe {
      */
     public function setSteps($steps){
         $this->steps = $steps;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsPublic()
+    {
+        return $this->isPublic;
+    }
+
+    /**
+     * @param mixed $isPublic
+     */
+    public function setIsPublic($isPublic)
+    {
+        $this->isPublic = $isPublic;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsApproved()
+    {
+        return $this->isApproved;
+    }
+
+    /**
+     * @param mixed $isApproved
+     */
+    public function setIsApproved($isApproved)
+    {
+        $this->isApproved = $isApproved;
     }
 
     /**

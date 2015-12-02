@@ -27,6 +27,7 @@ class Step
      * @ORM\Column(type="text")
      */
     protected $action;
+
     /**
      * @ORM\Column(type="integer")
      */

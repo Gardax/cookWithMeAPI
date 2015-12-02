@@ -30,6 +30,16 @@ class RecipeModel {
      */
     public $ingredients;
 
+    /**
+     * @var boolean
+     */
+    public $isPublic;
+
+    /**
+     * @var boolean
+     */
+    public $isApproved;
+
 
     function __construct(Recipe $recipe)
     {
@@ -77,6 +87,38 @@ class RecipeModel {
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isIsPublic()
+    {
+        return $this->isPublic;
+    }
+
+    /**
+     * @param boolean $isPublic
+     */
+    public function setIsPublic($isPublic)
+    {
+        $this->isPublic = $isPublic;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isIsApproved()
+    {
+        return $this->isApproved;
+    }
+
+    /**
+     * @param boolean $isApproved
+     */
+    public function setIsApproved($isApproved)
+    {
+        $this->isApproved = $isApproved;
     }
 
 }

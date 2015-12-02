@@ -15,6 +15,10 @@ class RecipeManager {
      * @var EntityManager
      */
     private $entityManager;
+
+    /**
+     * @param EntityManager $em
+     */
     public function __construct(EntityManager $em) {
         $this->entityManager=$em;
     }
