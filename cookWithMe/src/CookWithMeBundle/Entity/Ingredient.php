@@ -23,7 +23,7 @@ class Ingredient
      */
     protected $id;
     /**
-     * @ORM\Column(type="string", length=250)
+     * @ORM\Column(type="string", length=250, unique=true)
      */
     protected $name;
 
