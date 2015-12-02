@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="rating")
+ * @ORM\Table(name="ratings")
  */
 class Rating
 {
@@ -28,7 +28,7 @@ class Rating
     protected $score;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $comment = null;
 

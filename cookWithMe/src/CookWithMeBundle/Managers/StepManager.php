@@ -38,4 +38,11 @@ class StepManager
     public function saveChanges(){
         $this->entityManager->flush();
     }
+
+    /**
+     * @param Step $step
+     */
+    public function removeStep(Step $step){
+        $this->entityManager->remove($step);
+    }
 }

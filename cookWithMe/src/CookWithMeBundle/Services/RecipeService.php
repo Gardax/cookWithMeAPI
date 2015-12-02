@@ -134,35 +134,39 @@ class RecipeService {
      * Updates recipe.
      *
      * @param Recipe $recipe
-     * @param $recipeData
-     * @return Recipe
-     * @throws \Exception
-     */
+             * @param $recipeData
+             * @return Recipe
+             * @throws \Exception
+             */
 
-    public function updateRecipe(Recipe $recipe,$recipeData){
-//        if(!isset($recipeData['title']) || count($recipeData['title']) < self::MIN_TITLE_LENGTH ){
-//            throw new \Exception("The recipe must have a title!Are you miss something ?");
-//        }
+            public function updateRecipe(Recipe $recipe,$recipeData){
+        //        if(!isset($recipeData['title']) || count($recipeData['title']) < self::MIN_TITLE_LENGTH ){
+        //            throw new \Exception("The recipe must have a title!Are you miss something ?");
+        //        }
 
-        if(isset($recipeData['title'])){
-            $recipe->setTitle($recipeData['title']);
-        }
-
-
-        if(isset($recipeData['steps'])){
-            $recipe->setSteps(array());
-            $this->addStepsToRecipe($recipe,$recipeData['steps']);
-        }
-        if(isset($recipeData['ingredients'])){
-            $recipe->setIngredients(array());
-            $this->addIngredientsToRecipe($recipe,$recipeData['ingredients']);
-        }
+                if(isset($recipeData['title'])){
+                    $recipe->setTitle($recipeData['title']);
+                }
 
 
-        $this->recipeManager->saveChanges();
+                if(isset($recipeData['steps'])){
 
-        return $recipe;
-    }
+                    $this->clearRecipeSteps($recipe);
+                    $this->addStepsToRecipe($recipe,$recipeData['steps']);
+                }
+
+
+                if(isset($recipeData['ingredients'])){
+                    $recipe->getIngredients()->clear();
+                    $this->recipeManager->saveChanges();
+                    $this->addIngredientsToRecipe($recipe,$recipeData['ingredients']);
+                }
+
+
+                $this->recipeManager->saveChanges();
+
+                return $recipe;
+            }
 
     /**
      * Deletes recipe.
@@ -234,6 +238,16 @@ class RecipeService {
         }
 
         return $id;
+    }
+
+    /**
+     * @param Recipe $recipe
+     */
+    public function clearRecipeSteps(Recipe $recipe){
+        foreach($recipe->getSteps()as $step){
+            $this->stepService->removeStep($step);
+        }
+        $this->recipeManager->saveChanges();
     }
 
 }

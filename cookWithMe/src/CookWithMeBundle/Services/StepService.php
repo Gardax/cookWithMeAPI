@@ -50,4 +50,11 @@ class StepService
 
         return $steps;
     }
+
+    /**
+     * @param $step
+     */
+    public function removeStep($step){
+        $this->stepManager->removeStep($step);
+    }
 }

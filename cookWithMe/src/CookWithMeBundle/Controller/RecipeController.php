@@ -166,10 +166,10 @@ class RecipeController extends Controller
     }
 
     /**
-     * @Route("/recipe/rate/{id}", name="setRecipeRating")
-     * @Method("DELETE")
+     * @Route("/recipe/rate/{id}", name="rateRecipe")
+     * @Method("POST")
      */
-    public function setRecipeRating(Request $request, $id){
+    public function rateRecipe(Request $request, $id){
 
     }
 }
