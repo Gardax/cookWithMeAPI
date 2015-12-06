@@ -16,7 +16,7 @@ class User implements UserInterface, \Serializable
      * @ORM\ManyToMany(targetEntity="Role", inversedBy="users")
      * @ORM\JoinTable(name="users_roles")
      */
-    protected $roles;
+    protected $roles = array();
 
     /**
      * @ORM\Column(type="integer")
@@ -25,7 +25,7 @@ class User implements UserInterface, \Serializable
      */
     protected $id;
     /**
-     * @ORM\Column(type="string", length=10)
+     * @ORM\Column(type="string", length=10, nullable=true)
      */
     protected $salt;
     /**
@@ -39,7 +39,7 @@ class User implements UserInterface, \Serializable
     protected $password;
 
     /**
-     * @ORM\Column(type="string", length=60, unique=true)
+     * @ORM\Column(type="string", length=60, unique=true, nullable=true)
      */
     protected $email;
 
@@ -51,31 +51,131 @@ class User implements UserInterface, \Serializable
     public function __construct()
     {
         $this->roles = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->roles = array();
         $this->isActive = true;
-        $this->salt = $this->generateSalt();
-        // may not be needed, see section on salt below
-        // $this->salt = md5(uniqid(null, true));
+        //$this->salt = $this->generateSalt();
     }
 
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getUsername()
     {
         return $this->username;
     }
 
-    public function getSalt()
+    /**
+     * @param mixed $username
+     */
+    public function setUsername($username)
     {
-        return $this->salt;
+        $this->username = $username;
     }
 
+    /**
+     * @return mixed
+     */
     public function getPassword()
     {
         return $this->password;
     }
 
+    /**
+     * @param mixed $password
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param mixed $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param mixed $isActive
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    /**
+     * @param mixed $salt
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+    }
+
+    /**
+     * @return string
+     */
     public function getRoles()
     {
-
+        return $this->roles;
     }
+
+    /**
+     * @param string $roles
+     */
+    public function setRoles($roles)
+    {
+        $this->roles[] = $roles;
+    }
+
+    public function addRole($role)
+    {
+        if (!in_array($role, $this->roles, true)) {
+            $this->roles[] = $role;
+        }
+        return $this;
+    }
+
 
     public function eraseCredentials()
     {
@@ -88,28 +188,30 @@ class User implements UserInterface, \Serializable
             $this->id,
             $this->username,
             $this->password,
-            // see section on salt below
-            // $this->salt,
         ));
     }
 
-    /** @see \Serializable::unserialize() */
-    public function unserialize($serialized)
+    /**
+     * @param string $serialized
+     */
+    public function unSerialize($serialized)
     {
         list (
             $this->id,
             $this->username,
             $this->password,
-            // see section on salt below
-            // $this->salt
             ) = unserialize($serialized);
     }
-    private function generateSalt(){
-        $generatedSalt = array();
-        $salt = "zxcvbnm,.asdfghjklqwertyuiop[]1234567890-=!@#$%^&*()_+";
-        for($i = 0; $i < 5; $i++){
-            array_push($generatedSalt,$salt[rand(0,count($salt)-1)]);
-        }
-        return $generatedSalt;
-    }
+
+//    /**
+//     * @return array
+//     */
+//    private function generateSalt(){
+//        $generatedSalt = array();
+//        $salt = "zxcvbnm,.asdfghjklqwertyuiop[]1234567890-=!@#$%^&*()_+";
+//        for($i = 0; $i < 5; $i++){
+//            array_push($generatedSalt,$salt[rand(0,count($salt)-1)]);
+//        }
+//        return $generatedSalt;
+//    }
 }

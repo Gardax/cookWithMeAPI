@@ -16,4 +16,5 @@ class DefaultController extends Controller
     {
         return new JsonResponse(['error'=>'No route found for path: ' . $path]);
     }
+
 }

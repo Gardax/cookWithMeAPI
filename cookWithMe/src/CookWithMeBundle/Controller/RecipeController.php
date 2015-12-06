@@ -172,4 +172,6 @@ class RecipeController extends Controller
     public function rateRecipe(Request $request, $id){
 
     }
+
+
 }
