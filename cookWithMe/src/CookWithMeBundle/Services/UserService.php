@@ -11,7 +11,7 @@ namespace CookWithMeBundle\Services;
 
 use CookWithMeBundle\Managers\UserManager;
 use CookWithMeBundle\Entity\User;
-
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Class UserService
@@ -57,5 +57,31 @@ class UserService
         $this->userManager->saveChanges();
 
         return $userEntity;
+    }
+
+    public function getUserById($id){
+
+        $id = $this->validateId($id);
+
+        $user = $this->userManager->getUserById($id);
+        if(!$user){
+            throw new Exception("Recipe not found.");
+        }
+        return $user;
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     * @throws \Exception
+     */
+    public function validateId($id){
+        if(!$id || !is_numeric($id)){
+            throw new \Exception("The id must be numeric.");
+        }elseif($id < 1){
+            throw new \Exception("The user identifier cannot be a negative number.");
+        }
+
+        return $id;
     }
 }

@@ -40,6 +40,15 @@ class UserManager
         return $userEntity;
     }
 
+
+    public function getUserById($id)
+    {
+        $user = $this->entityManager->getRepository("CookWithMeBundle:User")->find($id);
+
+        return $user;
+    }
+
+
     /**
      * Flushes all entities.
      */

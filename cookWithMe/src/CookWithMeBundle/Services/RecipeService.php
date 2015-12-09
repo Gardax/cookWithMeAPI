@@ -1,7 +1,6 @@
 <?php
 namespace CookWithMeBundle\Services;
 
-use CookWithMeBundle\Entity\Ingredient;
 use CookWithMeBundle\Entity\Recipe;
 use CookWithMeBundle\Managers\RecipeManager;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -30,6 +29,7 @@ class RecipeService {
      * @var IngredientService
      */
     protected $ingredientService;
+
     /**
      * @param RecipeManager $recipeManager
      * @param StepService $stepService
@@ -42,9 +42,9 @@ class RecipeService {
     }
 
     /**
-     * Adds recipe
+     * Add recipe.
      *
-     * @param Array $recipeData
+     * @param $recipeData
      * @return Recipe
      * @throws \Exception
      */
@@ -81,7 +81,7 @@ class RecipeService {
     }
 
     /**
-     * Gets Recipes with limit per page
+     * Gets Recipes with limit per page.
      *
      * @param $page
      * @param $pageSize
@@ -90,7 +90,6 @@ class RecipeService {
      * @return array
      * @throws \Exception
      */
-
     public function getRecipes($page,$pageSize,$title = null, $ingredientIds = []){
 
         if(!isset($page)){
@@ -131,42 +130,37 @@ class RecipeService {
     }
 
     /**
-     * Updates recipe.
+     * Update recipe.
      *
      * @param Recipe $recipe
-             * @param $recipeData
-             * @return Recipe
-             * @throws \Exception
-             */
-
-            public function updateRecipe(Recipe $recipe,$recipeData){
+     * @param $recipeData
+     * @return Recipe
+     */
+    public function updateRecipe(Recipe $recipe,$recipeData){
         //        if(!isset($recipeData['title']) || count($recipeData['title']) < self::MIN_TITLE_LENGTH ){
         //            throw new \Exception("The recipe must have a title!Are you miss something ?");
         //        }
 
-                if(isset($recipeData['title'])){
-                    $recipe->setTitle($recipeData['title']);
-                }
+        if(isset($recipeData['title'])){
+            $recipe->setTitle($recipeData['title']);
+        }
 
+        if(isset($recipeData['steps'])){
 
-                if(isset($recipeData['steps'])){
+            $this->clearRecipeSteps($recipe);
+            $this->addStepsToRecipe($recipe,$recipeData['steps']);
+        }
 
-                    $this->clearRecipeSteps($recipe);
-                    $this->addStepsToRecipe($recipe,$recipeData['steps']);
-                }
+        if(isset($recipeData['ingredients'])){
+            $recipe->getIngredients()->clear();
+            $this->recipeManager->saveChanges();
+            $this->addIngredientsToRecipe($recipe,$recipeData['ingredients']);
+        }
 
+        $this->recipeManager->saveChanges();
 
-                if(isset($recipeData['ingredients'])){
-                    $recipe->getIngredients()->clear();
-                    $this->recipeManager->saveChanges();
-                    $this->addIngredientsToRecipe($recipe,$recipeData['ingredients']);
-                }
-
-
-                $this->recipeManager->saveChanges();
-
-                return $recipe;
-            }
+        return $recipe;
+    }
 
     /**
      * Deletes recipe.
@@ -234,7 +228,7 @@ class RecipeService {
         if(!$id || !is_numeric($id)){
             throw new \Exception("The identifier for the recipe must be a number! ");
         }elseif($id < 1){
-            throw new \Exception("The recipe identificator can not be a negative number.");
+            throw new \Exception("The recipe identifier cannot be a negative number.");
         }
 
         return $id;

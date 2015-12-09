@@ -51,4 +51,28 @@ class UserController extends Controller
             ]);
         }
     }
+
+    /**
+     * @Route("/user/single/{id}", name="getUser")
+     * @Method({"GET"})
+     * @param $id
+     * @return JsonResponse
+     */
+    public function getUserAction($id){
+
+        try {
+            $userService = $this->get('user_service');
+
+            $userEntity = $userService->getUserById($id);
+
+            $userModel = new UserModel($userEntity);
+
+            return new JsonResponse($userModel);
+        }catch (\Exception $ex) {
+            return new JsonResponse([
+                "error" => $ex->getMessage(),
+                "success" => self::FAIL
+            ]);
+        }
+    }
 }
