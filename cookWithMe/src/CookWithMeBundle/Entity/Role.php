@@ -9,13 +9,14 @@
 namespace CookWithMeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\Role\RoleInterface;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="roles")
  */
 
-class Role
+class Role implements RoleInterface
 {
     /**
      * @ORM\Column(type="integer")
@@ -72,5 +73,12 @@ class Role
         $this->role = $role;
     }
 
+    public function addUser(User $user)
+    {
+        //if (!in_array($user, $this->users, true)) {
+            $this->users[] = $user;
+       // }
+        return $this;
+    }
 
 }

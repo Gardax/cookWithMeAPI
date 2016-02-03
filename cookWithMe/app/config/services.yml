@@ -39,3 +39,6 @@ services:
     user_manager:
            class: CookWithMeBundle\Managers\UserManager
            arguments: [@doctrine.orm.default_entity_manager]
+    apikey_authenticator:
+          class:  CookWithMeBundle\Services\ApiKeyAuthenticator
+          public: false

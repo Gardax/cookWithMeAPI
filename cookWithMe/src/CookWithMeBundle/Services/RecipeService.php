@@ -99,7 +99,7 @@ class RecipeService {
             throw new \Exception("The page indexer must be number!");
         }
         if($page < 1){
-            throw new \Exception("The page indexer can be only positive number !");
+            throw new \Exception("The page indexer can be only positive number!");
         }
         
         $start = ($page -1) *$pageSize;
@@ -107,7 +107,7 @@ class RecipeService {
 
         $recipes = $this->recipeManager->getRecipes($start,$end,$title, $ingredientIds);
         if(!$recipes){
-            throw new \Exception("There is not result!");
+            throw new \Exception("There is no recipes!");
         }
         return $recipes;
     }

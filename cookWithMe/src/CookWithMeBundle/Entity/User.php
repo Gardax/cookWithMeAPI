@@ -2,6 +2,7 @@
 
 namespace CookWithMeBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 /**
@@ -11,13 +12,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class User implements UserInterface, \Serializable
 {
-    /**
-     * @var string
-     * @ORM\ManyToMany(targetEntity="Role", inversedBy="users")
-     * @ORM\JoinTable(name="users_roles")
-     */
-    protected $roles = array();
-
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -44,16 +38,27 @@ class User implements UserInterface, \Serializable
     protected $email;
 
     /**
+     * @ORM\Column(type="string", unique=true)
+     */
+    private $apiKey;
+
+    /**
      * @ORM\Column(name="is_active", type="boolean")
      */
     protected $isActive;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Role", inversedBy="users")
+     * @ORM\JoinTable(name="users_roles")
+     */
+    protected $roles = array();
+
+
     public function __construct()
     {
-        $this->roles = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->roles = array();
+        $this->roles = new ArrayCollection();
         $this->isActive = true;
-        //$this->salt = $this->generateSalt();
+        $this->salt = $this->generateSalt();
     }
 
     /**
@@ -121,6 +126,22 @@ class User implements UserInterface, \Serializable
     }
 
     /**
+     * @return string
+     */
+    public function getApiKey()
+    {
+        return $this->apiKey;
+    }
+
+    /**
+     * @param string $apiKey
+     */
+    public function setApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
+    }
+
+    /**
      * @return mixed
      */
     public function getIsActive()
@@ -145,15 +166,7 @@ class User implements UserInterface, \Serializable
     }
 
     /**
-     * @param mixed $salt
-     */
-    public function setSalt($salt)
-    {
-        $this->salt = $salt;
-    }
-
-    /**
-     * @return string
+     * @return ArrayCollection
      */
     public function getRoles()
     {
@@ -170,9 +183,9 @@ class User implements UserInterface, \Serializable
 
     public function addRole($role)
     {
-        if (!in_array($role, $this->roles, true)) {
+        //if (!in_array($role, $this->roles, true)) {
             $this->roles[] = $role;
-        }
+       // }
         return $this;
     }
 
@@ -203,15 +216,15 @@ class User implements UserInterface, \Serializable
             ) = unserialize($serialized);
     }
 
-//    /**
-//     * @return array
-//     */
-//    private function generateSalt(){
-//        $generatedSalt = array();
-//        $salt = "zxcvbnm,.asdfghjklqwertyuiop[]1234567890-=!@#$%^&*()_+";
-//        for($i = 0; $i < 5; $i++){
-//            array_push($generatedSalt,$salt[rand(0,count($salt)-1)]);
-//        }
-//        return $generatedSalt;
-//    }
+    /**
+     * @return array
+     */
+    private function generateSalt(){
+        $generatedSalt = "";
+        $salt = "zxcvbnm,.asdfghjklqwertyuiop[]1234567890-=!@#$%^&*()_+";
+        for($i = 0; $i < 22; $i++){
+            $generatedSalt .= $salt[random_int(0,count($salt)-1)];
+        }
+        return $generatedSalt;
+    }
 }

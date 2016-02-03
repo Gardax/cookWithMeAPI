@@ -48,6 +48,46 @@ class UserManager
         return $user;
     }
 
+    /**
+     * @param $apiKey
+     * @return User
+     */
+    public function getUserByApiKey($apiKey)
+    {
+        $query = $this->entityManager->createQuery(
+            "SELECT u
+             FROM CookWithMeBundle:User u
+             WHERE u.apiKey LIKE :apikey"
+        )
+        ->setParameters([
+            "apikey" => $apiKey
+        ]);
+
+
+        $user = $query->getOneOrNullResult();
+
+        return $user;
+    }
+
+    /**
+     * @param $username
+     * @return User
+     */
+    public function getUserByUsername($username)
+    {
+        $query = $this->entityManager->createQuery(
+            "SELECT u
+             FROM CookWithMeBundle:User u
+             WHERE u.username LIKE :username"
+        )
+            ->setParameters([
+                "username" => $username
+            ]);
+
+        $user = $query->getOneOrNullResult();
+
+        return $user;
+    }
 
     /**
      * Flushes all entities.

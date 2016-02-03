@@ -1,11 +1,16 @@
 # To get started with security, check out the documentation:
 # http://symfony.com/doc/current/book/security.html
 security:
+    encoders:
+        CookWithMeBundle\Entity\User:
+            algorithm: bcrypt
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
         in_memory:
             memory: ~
+        user_service:
+            id: user_service
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -14,6 +19,14 @@ security:
             security: false
 
         main:
+            pattern: ^/
+            stateless: true
+            simple_preauth:
+                authenticator: apikey_authenticator
+            provider: user_service
+            anonymous: ~
+
+        default:
             anonymous: ~
             # activate different ways to authenticate
 

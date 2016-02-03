@@ -12,6 +12,11 @@ use CookWithMeBundle\Models\UserModel;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class UserController
@@ -23,10 +28,8 @@ class UserController extends Controller
     const FAIL = 0;
 
     /**
-     * @Route("/add/user" , name="addUser")
+     * @Route("/user/add" , name="addUser")
      * @Method({"POST"})
-     * @param Request $request
-     * @return JsonResponse
      */
     public function addUserAction(Request $request){
 
@@ -69,6 +72,34 @@ class UserController extends Controller
 
             return new JsonResponse($userModel);
         }catch (\Exception $ex) {
+            return new JsonResponse([
+                "error" => $ex->getMessage(),
+                "success" => self::FAIL
+            ]);
+        }
+    }
+
+    /**
+     * @Route("/user/authenticate" , name="authenticate")
+     * @Method({"POST"})
+     */
+    public function authenticateAction(Request $request){
+
+        $userService = $this->get('user_service');
+
+        try {
+            $userData = [
+                'username' => $request->request->get('username'),
+                'email' => $request->request->get('email'),
+                'password' => $request->request->get('password')
+            ];
+
+            $success = $userService->authenticate($userData);
+
+
+            return new JsonResponse([]);
+
+        }catch (\Exception $ex){
             return new JsonResponse([
                 "error" => $ex->getMessage(),
                 "success" => self::FAIL
