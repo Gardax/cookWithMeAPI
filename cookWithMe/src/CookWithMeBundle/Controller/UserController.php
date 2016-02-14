@@ -1,109 +1,71 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: dahaka
- * Date: 12/4/15
- * Time: 6:41 PM
- */
 
 namespace CookWithMeBundle\Controller;
 
+use CookWithMeBundle\Entity\User;
+use CookWithMeBundle\Exceptions\InvalidFormException;
 use CookWithMeBundle\Models\UserModel;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Controller\Annotations\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use CookWithMeBundle\Form\Type\UserType;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-/**
- * Class UserController
- * @package CookWithMeBundle\Controller
- */
+
 class UserController extends Controller
 {
-    const SUCCESS = 1;
-    const FAIL = 0;
-
     /**
      * @Route("/user/add" , name="addUser")
      * @Method({"POST"})
-     */
-    public function addUserAction(Request $request){
-
-        $userService = $this->get('user_service');
-
-        try {
-            $userData = [
-                'username' => $request->request->get('username'),
-                'email' => $request->request->get('email'),
-                'password' => $request->request->get('password')
-            ];
-
-            $userEntity = $userService->addUser($userData);
-            $userModel = new UserModel($userEntity);
-
-            return new JsonResponse($userModel);
-
-        }catch (\Exception $ex){
-            return new JsonResponse([
-                "error" => $ex->getMessage(),
-                "success" => self::FAIL
-            ]);
-        }
-    }
-
-    /**
-     * @Route("/user/single/{id}", name="getUser")
-     * @Method({"GET"})
-     * @param $id
+     *
+     * @param Request $request
+     *
+     * @throws InvalidFormException
      * @return JsonResponse
      */
-    public function getUserAction($id){
+    public function registerAction(Request $request) {
+        //TODO: Check if the username and the emails are free.
 
-        try {
-            $userService = $this->get('user_service');
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user, ['validation_groups' => ['registration']] );
+        $form->handleRequest($request);
 
-            $userEntity = $userService->getUserById($id);
-
-            $userModel = new UserModel($userEntity);
-
-            return new JsonResponse($userModel);
-        }catch (\Exception $ex) {
-            return new JsonResponse([
-                "error" => $ex->getMessage(),
-                "success" => self::FAIL
-            ]);
+        if(!$form->isValid()){
+            throw new InvalidFormException($form);
         }
-    }
-
-    /**
-     * @Route("/user/authenticate" , name="authenticate")
-     * @Method({"POST"})
-     */
-    public function authenticateAction(Request $request){
 
         $userService = $this->get('user_service');
 
-        try {
-            $userData = [
-                'username' => $request->request->get('username'),
-                'email' => $request->request->get('email'),
-                'password' => $request->request->get('password')
-            ];
+        $user = $userService->addUser($user);
 
-            $success = $userService->authenticate($userData);
+        $userModel = new UserModel($user);
 
+        return new JsonResponse($userModel);
+    }
 
-            return new JsonResponse([]);
+    /**
+     * @Route("/user/authenticate" , name="authenticateUser")
+     * @Method({"POST"})
+     *
+     * @param Request $request
+     *
+     * @throws InvalidFormException
+     * @return JsonResponse
+     */
+    public function authenticateAction(Request $request) {
+        $userData = $request->get('userData');
+        $username = $userData['username'];
+        $password = $userData['password'];
 
-        }catch (\Exception $ex){
-            return new JsonResponse([
-                "error" => $ex->getMessage(),
-                "success" => self::FAIL
-            ]);
-        }
+        $userService = $this->get('user_service');
+        $user = $userService->authenticateUser($username, $password);
+
+        $userModel = new UserModel($user);
+
+        return new JsonResponse($userModel);
     }
 }

@@ -11,65 +11,32 @@ namespace CookWithMeBundle\Models;
 use CookWithMeBundle\Entity\User;
 class UserModel
 {
-
     /**
-     * @var array
-     */
-    public $roles = array();
-
-    /**
-     * @var
+     * @var int
      */
     public $id;
 
     /**
-     * @var
-     */
-    public $salt;
-
-    /**
-     * @var
+     * @var string
      */
     public $username;
 
     /**
-     * @var
-     */
-    public $password;
-
-    /**
-     * @var
+     * @var string
      */
     public $email;
 
     /**
-     * @var
+     * @var string
      */
-    public $isActive;
+    public $apiKey;
 
     public function __construct(User $user){
 
-        $this->id = $user->getId();
-        $this->username = $user->getUsername();
-        $this->email = $user->getEmail();
-        $this->password = $user->getPassword();
-        $this->isActive = $user->getIsActive();
-    }
-
-    /**
-     * @return array
-     */
-    public function getRoles()
-    {
-        return $this->roles;
-    }
-
-    /**
-     * @param array $roles
-     */
-    public function setRoles($roles)
-    {
-        $this->roles = $roles;
+        $this->setId($user->getId());
+        $this->setUsername($user->getUsername());
+        $this->setEmail($user->getEmail());
+        $this->setApiKey($user->getApiKey());
     }
 
     /**
@@ -81,27 +48,27 @@ class UserModel
     }
 
     /**
+     * @return string
+     */
+    public function getApiKey()
+    {
+        return $this->apiKey;
+    }
+
+    /**
+     * @param string $apiKey
+     */
+    public function setApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
+    }
+
+    /**
      * @param mixed $id
      */
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSalt()
-    {
-        return $this->salt;
-    }
-
-    /**
-     * @param mixed $salt
-     */
-    public function setSalt($salt)
-    {
-        $this->salt = $salt;
     }
 
     /**
@@ -120,21 +87,6 @@ class UserModel
         $this->username = $username;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * @param mixed $password
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-    }
 
     /**
      * @return mixed
@@ -151,24 +103,4 @@ class UserModel
     {
         $this->email = $email;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getIsActive()
-    {
-        return $this->isActive;
-    }
-
-    /**
-     * @param mixed $isActive
-     */
-    public function setIsActive($isActive)
-    {
-        $this->isActive = $isActive;
-    }
-
-
-
-
 }

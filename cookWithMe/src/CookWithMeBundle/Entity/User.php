@@ -5,6 +5,8 @@ namespace CookWithMeBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * @ORM\Entity
  * @ORM\Table(name="users")
@@ -24,28 +26,40 @@ class User implements UserInterface, \Serializable
     protected $salt;
     /**
      * @ORM\Column(type="string", length=25, unique=true)
+     * @Assert\NotBlank(groups={"registration", "login"}, message="Username cannot be blank.")
+     * @Assert\Length(
+     *     min=3,
+     *     max=25,
+     *     minMessage="Username should be between 3 and 25 characters.",
+     *     maxMessage="Username should be between 3 and 25 characters.",
+     *     groups={"registration"}
+     * )
      */
     protected $username;
 
     /**
      * @ORM\Column(type="string", length=64)
+     * @Assert\NotBlank(groups={"login", "register"}, message="Password cannot be blank.")
+     * @Assert\Length(min=4, max = 100, groups={"registration"})
      */
     protected $password;
 
+
     /**
      * @ORM\Column(type="string", length=60, unique=true, nullable=true)
+     * @Assert\Email(groups={"registration"}, message="Invalid email address.")
      */
     protected $email;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string", unique=true, nullable=true )
      */
     private $apiKey;
 
     /**
      * @ORM\Column(name="is_active", type="boolean")
      */
-    protected $isActive;
+    protected $isActive = 1;
 
     /**
      * @ORM\ManyToMany(targetEntity="Role", inversedBy="users")
@@ -57,8 +71,6 @@ class User implements UserInterface, \Serializable
     public function __construct()
     {
         $this->roles = new ArrayCollection();
-        $this->isActive = true;
-        $this->salt = $this->generateSalt();
     }
 
     /**
@@ -165,6 +177,11 @@ class User implements UserInterface, \Serializable
         return $this->salt;
     }
 
+
+    public function setSalt() {
+        $this->salt = $this->generateSalt();
+    }
+
     /**
      * @return ArrayCollection
      */
@@ -220,11 +237,8 @@ class User implements UserInterface, \Serializable
      * @return array
      */
     private function generateSalt(){
-        $generatedSalt = "";
-        $salt = "zxcvbnm,.asdfghjklqwertyuiop[]1234567890-=!@#$%^&*()_+";
-        for($i = 0; $i < 22; $i++){
-            $generatedSalt .= $salt[random_int(0,count($salt)-1)];
-        }
+        $generatedSalt = uniqid($this->getUsername());
+
         return $generatedSalt;
     }
 }

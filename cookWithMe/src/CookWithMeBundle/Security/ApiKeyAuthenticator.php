@@ -6,9 +6,10 @@
  * Time: 8:18 PM
  */
 
-namespace CookWithMeBundle\Services;
+namespace CookWithMeBundle\Security;
 
 
+use CookWithMeBundle\Services\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
@@ -24,9 +25,9 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface
 {
     public function createToken(Request $request, $providerKey)
     {
-         $apiKey = $request->headers->get('apikey');
+         $apiKey = $request->headers->get('apiKey');
 
-        if (!$apiKey) {
+        if(!$apiKey) {
             //throw new BadCredentialsException('No API key found');
 
             // or to just skip api key authentication
@@ -42,7 +43,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface
 
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userService, $providerKey)
     {
-        if (!$userService instanceof UserService) {
+        if(!$userService instanceof UserService) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'The user provider must be an instance of UserService (%s was given).',
@@ -54,7 +55,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface
         $apiKey = $token->getCredentials();
         $username = $userService->getUsernameForApiKey($apiKey);
 
-        if (!$username) {
+        if(!$username) {
             // CAUTION: this message will be returned to the client
             // (so don't put any un-trusted messages / error strings here)
             throw new CustomUserMessageAuthenticationException(
@@ -68,7 +69,7 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface
             $user,
             $apiKey,
             $providerKey,
-            $user->getRoles()
+            $user->getRoles()->toArray()
         );
     }
 

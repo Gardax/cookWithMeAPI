@@ -3,7 +3,6 @@
 namespace CookWithMeBundle\DataFixtures\ORM;
 
 
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use CookWithMeBundle\Entity\Role;
 use CookWithMeBundle\Entity\User;
@@ -11,7 +10,7 @@ use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadUserData implements FixtureInterface, ContainerAwareInterface
+class LoadUserData implements Fixtures, ContainerAwareInterface
 {
     /**
     * @var ContainerInterface
@@ -28,6 +27,7 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
         $user = new User();
         $user->setUsername('admin');
         $user->setEmail('admin@test.com');
+        $user->setApiKey('');
 
         $encoder = $this->container->get('security.password_encoder');
         $password = $encoder->encodePassword($user, 'faster');

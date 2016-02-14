@@ -78,7 +78,7 @@ class UserManager
         $query = $this->entityManager->createQuery(
             "SELECT u
              FROM CookWithMeBundle:User u
-             WHERE u.username LIKE :username"
+             WHERE u.username = :username"
         )
             ->setParameters([
                 "username" => $username
@@ -87,6 +87,41 @@ class UserManager
         $user = $query->getOneOrNullResult();
 
         return $user;
+    }
+
+    /**
+     * @param $uniqueIdentifier
+     * @return User | null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getUserByUserNameOrEmail($uniqueIdentifier){
+        $query = $this->entityManager->createQuery(
+            "SELECT u
+             FROM CookWithMeBundle:User u
+             WHERE u.username = :uniqueIdentifier OR u.email = :uniqueIdentifier"
+        )
+            ->setParameters([
+                "uniqueIdentifier" => $uniqueIdentifier
+            ]);
+
+        $user = $query->getOneOrNullResult();
+
+        return $user;
+    }
+
+    /**
+     * Gets user role by role name.
+     *
+     * @param $roleName
+     * @return \CookWithMeBundle\Entity\Role[]
+     */
+    public function getUserRole($roleName) {
+        $role = $this->entityManager->getRepository("CookWithMeBundle:Role")->findOneBy([
+                'role' => $roleName
+            ]
+        );
+
+        return $role;
     }
 
     /**

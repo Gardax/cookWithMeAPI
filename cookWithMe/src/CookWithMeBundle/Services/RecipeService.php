@@ -4,6 +4,8 @@ namespace CookWithMeBundle\Services;
 use CookWithMeBundle\Entity\Recipe;
 use CookWithMeBundle\Managers\RecipeManager;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class RecipeService
@@ -93,13 +95,13 @@ class RecipeService {
     public function getRecipes($page,$pageSize,$title = null, $ingredientIds = []){
 
         if(!isset($page)){
-            throw new \Exception("You must enter a number for indexer!");
+            throw new BadRequestHttpException("You must enter a number for indexer!");
         }
         if(!is_numeric($page)){
-            throw new \Exception("The page indexer must be number!");
+            throw new BadRequestHttpException("The page indexer must be number!");
         }
         if($page < 1){
-            throw new \Exception("The page indexer can be only positive number!");
+            throw new BadRequestHttpException("The page indexer can be only positive number!");
         }
         
         $start = ($page -1) *$pageSize;
@@ -107,7 +109,7 @@ class RecipeService {
 
         $recipes = $this->recipeManager->getRecipes($start,$end,$title, $ingredientIds);
         if(!$recipes){
-            throw new \Exception("There is no recipes!");
+            throw new NotFoundHttpException("There is no recipes!");
         }
         return $recipes;
     }
