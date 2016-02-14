@@ -3,6 +3,7 @@
 namespace CookWithMeBundle\DataFixtures\ORM;
 
 
+use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use CookWithMeBundle\Entity\Role;
 use CookWithMeBundle\Entity\User;
@@ -10,7 +11,7 @@ use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadUserData implements Fixtures, ContainerAwareInterface
+class LoadUserData implements FixtureInterface, ContainerAwareInterface
 {
     /**
     * @var ContainerInterface
